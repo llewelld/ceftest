@@ -6,8 +6,8 @@
 # Source files.
 #
 
-# cefclient browser sources.
-set(CEFCLIENT_BROWSER_BROWSER_SRCS
+# ceftest browser sources.
+set(CEFTEST_BROWSER_BROWSER_SRCS
   browser/base_client_handler.cc
   browser/base_client_handler.h
   browser/binary_transfer_test.cc
@@ -86,9 +86,9 @@ set(CEFCLIENT_BROWSER_BROWSER_SRCS
   browser/window_test_runner_views.cc
   browser/window_test_runner_views.h
   )
-source_group(cefclient\\\\browser FILES ${CEFCLIENT_BROWSER_BROWSER_SRCS})
+source_group(ceftest\\\\browser FILES ${CEFTEST_BROWSER_BROWSER_SRCS})
 
-set(CEFCLIENT_BROWSER_SHARED_BROWSER_SRCS
+set(CEFTEST_BROWSER_SHARED_BROWSER_SRCS
   ../shared/browser/client_app_browser.cc
   ../shared/browser/client_app_browser.h
   ../shared/browser/file_util.cc
@@ -103,22 +103,22 @@ set(CEFCLIENT_BROWSER_SHARED_BROWSER_SRCS
   ../shared/browser/main_message_loop_std.h
   ../shared/browser/resource_util.h
   )
-source_group(shared\\\\browser FILES ${CEFCLIENT_BROWSER_SHARED_BROWSER_SRCS})
+source_group(shared\\\\browser FILES ${CEFTEST_BROWSER_SHARED_BROWSER_SRCS})
 
-set(CEFCLIENT_BROWSER_SRCS
-  ${CEFCLIENT_BROWSER_BROWSER_SRCS}
-  ${CEFCLIENT_BROWSER_SHARED_BROWSER_SRCS}
+set(CEFTEST_BROWSER_SRCS
+  ${CEFTEST_BROWSER_BROWSER_SRCS}
+  ${CEFTEST_BROWSER_SHARED_BROWSER_SRCS}
   )
 
-# cefclient common sources.
-set(CEFCLIENT_COMMON_COMMON_SRCS
+# ceftest common sources.
+set(CEFTEST_COMMON_COMMON_SRCS
   common/client_app_delegates_common.cc
   common/scheme_test_common.cc
   common/scheme_test_common.h
   )
-source_group(cefclient\\\\common FILES ${CEFCLIENT_COMMON_COMMON_SRCS})
+source_group(ceftest\\\\common FILES ${CEFTEST_COMMON_COMMON_SRCS})
 
-set(CEFCLIENT_COMMON_SHARED_COMMON_SRCS
+set(CEFTEST_COMMON_SHARED_COMMON_SRCS
   ../shared/common/binary_value_utils.cc
   ../shared/common/binary_value_utils.h
   ../shared/common/client_app.cc
@@ -130,15 +130,15 @@ set(CEFCLIENT_COMMON_SHARED_COMMON_SRCS
   ../shared/common/string_util.cc
   ../shared/common/string_util.h
   )
-source_group(shared\\\\common FILES ${CEFCLIENT_COMMON_SHARED_COMMON_SRCS})
+source_group(shared\\\\common FILES ${CEFTEST_COMMON_SHARED_COMMON_SRCS})
 
-set(CEFCLIENT_COMMON_SRCS
-  ${CEFCLIENT_COMMON_COMMON_SRCS}
-  ${CEFCLIENT_COMMON_SHARED_COMMON_SRCS}
+set(CEFTEST_COMMON_SRCS
+  ${CEFTEST_COMMON_COMMON_SRCS}
+  ${CEFTEST_COMMON_SHARED_COMMON_SRCS}
   )
 
-# cefclient renderer sources.
-set(CEFCLIENT_RENDERER_RENDERER_SRCS
+# ceftest renderer sources.
+set(CEFTEST_RENDERER_RENDERER_SRCS
   renderer/client_app_delegates_renderer.cc
   renderer/client_renderer.cc
   renderer/client_renderer.h
@@ -149,26 +149,26 @@ set(CEFCLIENT_RENDERER_RENDERER_SRCS
   renderer/performance_test_setup.h
   renderer/performance_test_tests.cc
   )
-source_group(cefclient\\\\renderer FILES ${CEFCLIENT_RENDERER_RENDERER_SRCS})
+source_group(ceftest\\\\renderer FILES ${CEFTEST_RENDERER_RENDERER_SRCS})
 
-set(CEFCLIENT_RENDERER_SHARED_RENDERER_SRCS
+set(CEFTEST_RENDERER_SHARED_RENDERER_SRCS
   ../shared/renderer/client_app_renderer.cc
   ../shared/renderer/client_app_renderer.h
   )
-source_group(shared\\\\renderer FILES ${CEFCLIENT_RENDERER_SHARED_RENDERER_SRCS})
+source_group(shared\\\\renderer FILES ${CEFTEST_RENDERER_SHARED_RENDERER_SRCS})
 
-set(CEFCLIENT_RENDERER_SRCS
-  ${CEFCLIENT_RENDERER_RENDERER_SRCS}
-  ${CEFCLIENT_RENDERER_SHARED_RENDERER_SRCS}
+set(CEFTEST_RENDERER_SRCS
+  ${CEFTEST_RENDERER_RENDERER_SRCS}
+  ${CEFTEST_RENDERER_SHARED_RENDERER_SRCS}
   )
 
-#cefclient Linux sources
-set(CEFCLIENT_LINUX_SRCS
-  cefclient_gtk.cc
+#ceftest Linux sources
+set(CEFTEST_LINUX_SRCS
+  ceftest_gtk.cc
   )
-source_group(cefclient FILES ${CEFCLIENT_LINUX_SRCS})
+source_group(ceftest FILES ${CEFTEST_LINUX_SRCS})
 
-set(CEFCLIENT_LINUX_BROWSER_SRCS
+set(CEFTEST_LINUX_BROWSER_SRCS
   browser/browser_window_osr_gtk.cc
   browser/browser_window_osr_gtk.h
   browser/browser_window_std_gtk.cc
@@ -190,27 +190,27 @@ set(CEFCLIENT_LINUX_BROWSER_SRCS
   browser/window_test_runner_gtk.cc
   browser/window_test_runner_gtk.h
   )
-source_group(cefclient\\\\browser FILES ${CEFCLIENT_LINUX_BROWSER_SRCS})
+source_group(ceftest\\\\browser FILES ${CEFTEST_LINUX_BROWSER_SRCS})
 
-set(CEFCLIENT_LINUX_SHARED_BROWSER_SRCS
+set(CEFTEST_LINUX_SHARED_BROWSER_SRCS
   ../shared/browser/main_message_loop_external_pump_linux.cc
   ../shared/browser/resource_util_posix.cc
   )
-source_group(shared\\\\browser FILES ${CEFCLIENT_LINUX_SHARED_BROWSER_SRCS})
+source_group(shared\\\\browser FILES ${CEFTEST_LINUX_SHARED_BROWSER_SRCS})
 
-set(CEFCLIENT_LINUX_SRCS
-  ${CEFCLIENT_LINUX_SRCS}
-  ${CEFCLIENT_LINUX_BROWSER_SRCS}
-  ${CEFCLIENT_LINUX_SHARED_BROWSER_SRCS}
+set(CEFTEST_LINUX_SRCS
+  ${CEFTEST_LINUX_SRCS}
+  ${CEFTEST_LINUX_BROWSER_SRCS}
+  ${CEFTEST_LINUX_SHARED_BROWSER_SRCS}
   )
 
-#cefclient Mac OS X sources
-set(CEFCLIENT_MACOSX_SRCS
-  cefclient_mac.mm
+#ceftest Mac OS X sources
+set(CEFTEST_MACOSX_SRCS
+  ceftest_mac.mm
   )
-source_group(cefclient FILES ${CEFCLIENT_MACOSX_SRCS})
+source_group(ceftest FILES ${CEFTEST_MACOSX_SRCS})
 
-set(CEFCLIENT_MACOSX_BROWSER_SRCS
+set(CEFTEST_MACOSX_BROWSER_SRCS
   browser/browser_window_osr_mac.h
   browser/browser_window_osr_mac.mm
   browser/browser_window_std_mac.h
@@ -231,38 +231,38 @@ set(CEFCLIENT_MACOSX_BROWSER_SRCS
   browser/window_test_runner_mac.h
   browser/window_test_runner_mac.mm
   )
-source_group(cefclient\\\\browser FILES ${CEFCLIENT_MACOSX_BROWSER_SRCS})
+source_group(ceftest\\\\browser FILES ${CEFTEST_MACOSX_BROWSER_SRCS})
 
-set(CEFCLIENT_MACOSX_SHARED_BROWSER_SRCS
+set(CEFTEST_MACOSX_SHARED_BROWSER_SRCS
   ../shared/browser/main_message_loop_external_pump_mac.mm
   ../shared/browser/resource_util_mac.mm
   ../shared/browser/resource_util_posix.cc
   )
-source_group(shared\\\\browser FILES ${CEFCLIENT_MACOSX_SHARED_BROWSER_SRCS})
+source_group(shared\\\\browser FILES ${CEFTEST_MACOSX_SHARED_BROWSER_SRCS})
 
-set(CEFCLIENT_MAC_SRCS
-  ${CEFCLIENT_MACOSX_SRCS}
-  ${CEFCLIENT_MACOSX_BROWSER_SRCS}
-  ${CEFCLIENT_MACOSX_SHARED_BROWSER_SRCS}
+set(CEFTEST_MAC_SRCS
+  ${CEFTEST_MACOSX_SRCS}
+  ${CEFTEST_MACOSX_BROWSER_SRCS}
+  ${CEFTEST_MACOSX_SHARED_BROWSER_SRCS}
   )
 
-# cefclient Mac OS X helper sources.
-set(CEFCLIENT_HELPER_SHARED_SRCS
+# ceftest Mac OS X helper sources.
+set(CEFTEST_HELPER_SHARED_SRCS
   ../shared/process_helper_mac.cc
   )
-source_group(shared FILES ${CEFCLIENT_HELPER_SHARED_SRCS})
+source_group(shared FILES ${CEFTEST_HELPER_SHARED_SRCS})
 
-set(CEFCLIENT_MAC_HELPER_SRCS
-  ${CEFCLIENT_HELPER_SHARED_SRCS}
+set(CEFTEST_MAC_HELPER_SRCS
+  ${CEFTEST_HELPER_SHARED_SRCS}
   )
 
-#cefclient Windows sources
-set(CEFCLIENT_WINDOWS_SRCS
-  cefclient_win.cc
+#ceftest Windows sources
+set(CEFTEST_WINDOWS_SRCS
+  ceftest_win.cc
   )
-source_group(cefclient FILES ${CEFCLIENT_WINDOWS_SRCS})
+source_group(ceftest FILES ${CEFTEST_WINDOWS_SRCS})
 
-set(CEFCLIENT_WINDOWS_BROWSER_SRCS
+set(CEFTEST_WINDOWS_BROWSER_SRCS
   browser/browser_window_osr_win.cc
   browser/browser_window_osr_win.h
   browser/browser_window_std_win.cc
@@ -297,44 +297,44 @@ set(CEFCLIENT_WINDOWS_BROWSER_SRCS
   browser/window_test_runner_win.cc
   browser/window_test_runner_win.h
   )
-source_group(cefclient\\\\browser FILES ${CEFCLIENT_WINDOWS_BROWSER_SRCS})
+source_group(ceftest\\\\browser FILES ${CEFTEST_WINDOWS_BROWSER_SRCS})
 
-set(CEFCLIENT_WINDOWS_SHARED_BROWSER_SRCS
+set(CEFTEST_WINDOWS_SHARED_BROWSER_SRCS
   ../shared/browser/main_message_loop_external_pump_win.cc
   ../shared/browser/resource_util_win.cc
   ../shared/browser/util_win.cc
   ../shared/browser/util_win.h
   )
-source_group(shared\\\\browser FILES ${CEFCLIENT_WINDOWS_SHARED_BROWSER_SRCS})
+source_group(shared\\\\browser FILES ${CEFTEST_WINDOWS_SHARED_BROWSER_SRCS})
 
-set(CEFCLIENT_WINDOWS_WIN_SRCS
-  win/cefclient.rc
+set(CEFTEST_WINDOWS_WIN_SRCS
+  win/ceftest.rc
   )
-source_group(cefclient\\\\win FILES ${CEFCLIENT_WINDOWS_WIN_SRCS})
+source_group(ceftest\\\\win FILES ${CEFTEST_WINDOWS_WIN_SRCS})
 
-set(CEFCLIENT_WINDOWS_SRCS
-  ${CEFCLIENT_WINDOWS_SRCS}
-  ${CEFCLIENT_WINDOWS_BROWSER_SRCS}
-  ${CEFCLIENT_WINDOWS_SHARED_BROWSER_SRCS}
-  ${CEFCLIENT_WINDOWS_WIN_SRCS}
+set(CEFTEST_WINDOWS_SRCS
+  ${CEFTEST_WINDOWS_SRCS}
+  ${CEFTEST_WINDOWS_BROWSER_SRCS}
+  ${CEFTEST_WINDOWS_SHARED_BROWSER_SRCS}
+  ${CEFTEST_WINDOWS_WIN_SRCS}
   )
 
-# cefclient resources.
-set(CEFCLIENT_RESOURCES_MAC_SRCS_MAC
+# ceftest resources.
+set(CEFTEST_RESOURCES_MAC_SRCS_MAC
   mac/Info.plist.in
-  mac/cefclient.icns
+  mac/ceftest.icns
   )
-APPEND_PLATFORM_SOURCES(CEFCLIENT_RESOURCES_MAC_SRCS)
-source_group(cefclient\\\\mac FILES ${CEFCLIENT_RESOURCES_MAC_SRCS})
+APPEND_PLATFORM_SOURCES(CEFTEST_RESOURCES_MAC_SRCS)
+source_group(ceftest\\\\mac FILES ${CEFTEST_RESOURCES_MAC_SRCS})
 
-set(CEFCLIENT_RESOURCES_MAC_ENGLISH_LPROJ_SRCS_MAC
+set(CEFTEST_RESOURCES_MAC_ENGLISH_LPROJ_SRCS_MAC
   mac/English.lproj/InfoPlist.strings
   mac/English.lproj/MainMenu.xib
   )
-APPEND_PLATFORM_SOURCES(CEFCLIENT_RESOURCES_MAC_ENGLISH_LPROJ_SRCS)
-source_group(cefclient\\\\mac\\\\English.lproj FILES ${CEFCLIENT_RESOURCES_MAC_ENGLISH_LPROJ_SRCS})
+APPEND_PLATFORM_SOURCES(CEFTEST_RESOURCES_MAC_ENGLISH_LPROJ_SRCS)
+source_group(ceftest\\\\mac\\\\English.lproj FILES ${CEFTEST_RESOURCES_MAC_ENGLISH_LPROJ_SRCS})
 
-set(CEFCLIENT_RESOURCES_RESOURCES_SRCS
+set(CEFTEST_RESOURCES_RESOURCES_SRCS
   resources/binary_transfer.html
   resources/binding.html
   resources/dialogs.html
@@ -359,22 +359,22 @@ set(CEFCLIENT_RESOURCES_RESOURCES_SRCS
   resources/window.html
   resources/xmlhttprequest.html
   )
-source_group(cefclient\\\\resources FILES ${CEFCLIENT_RESOURCES_RESOURCES_SRCS})
+source_group(ceftest\\\\resources FILES ${CEFTEST_RESOURCES_RESOURCES_SRCS})
 
-set(CEFCLIENT_RESOURCES_SHARED_RESOURCES_SRCS
+set(CEFTEST_RESOURCES_SHARED_RESOURCES_SRCS
   ../shared/resources/osr_test.html
   ../shared/resources/pdf.html
   ../shared/resources/pdf.pdf
   ../shared/resources/window_icon.1x.png
   ../shared/resources/window_icon.2x.png
   )
-source_group(shared\\\\resources FILES ${CEFCLIENT_RESOURCES_SHARED_RESOURCES_SRCS})
+source_group(shared\\\\resources FILES ${CEFTEST_RESOURCES_SHARED_RESOURCES_SRCS})
 
-set(CEFCLIENT_RESOURCES_SRCS
-  ${CEFCLIENT_RESOURCES_MAC_SRCS}
-  ${CEFCLIENT_RESOURCES_MAC_ENGLISH_LPROJ_SRCS}
-  ${CEFCLIENT_RESOURCES_RESOURCES_SRCS}
-  ${CEFCLIENT_RESOURCES_SHARED_RESOURCES_SRCS}
+set(CEFTEST_RESOURCES_SRCS
+  ${CEFTEST_RESOURCES_MAC_SRCS}
+  ${CEFTEST_RESOURCES_MAC_ENGLISH_LPROJ_SRCS}
+  ${CEFTEST_RESOURCES_RESOURCES_SRCS}
+  ${CEFTEST_RESOURCES_SHARED_RESOURCES_SRCS}
   )
 
 
@@ -383,10 +383,10 @@ set(CEFCLIENT_RESOURCES_SRCS
 #
 
 # Target executable names.
-set(CEF_TARGET "cefclient")
+set(CEF_TARGET "ceftest")
 if(OS_MAC)
-  set(CEF_HELPER_TARGET "cefclient_Helper")
-  set(CEF_HELPER_OUTPUT_NAME "cefclient Helper")
+  set(CEF_HELPER_TARGET "ceftest_Helper")
+  set(CEF_HELPER_OUTPUT_NAME "ceftest Helper")
 else()
   # Logical target used to link the libcef library.
   ADD_LOGICAL_TARGET("libcef_lib" "${CEF_LIB_DEBUG}" "${CEF_LIB_RELEASE}")
@@ -401,21 +401,21 @@ SET_CEF_TARGET_OUT_DIR()
 #
 
 if(OS_LINUX)
-  # All sources required by the "cefclient" target. Generates an executable that
+  # All sources required by the "ceftest" target. Generates an executable that
   # is used for all processes.
-  set(CEFCLIENT_SRCS
-    ${CEFCLIENT_BROWSER_SRCS}
-    ${CEFCLIENT_COMMON_SRCS}
-    ${CEFCLIENT_RENDERER_SRCS}
-    ${CEFCLIENT_RESOURCES_SRCS}
-    ${CEFCLIENT_LINUX_SRCS}
+  set(CEFTEST_SRCS
+    ${CEFTEST_BROWSER_SRCS}
+    ${CEFTEST_COMMON_SRCS}
+    ${CEFTEST_RENDERER_SRCS}
+    ${CEFTEST_RESOURCES_SRCS}
+    ${CEFTEST_LINUX_SRCS}
     )
 
   # Find required libraries and update compiler/linker variables.
   FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-3.0 gthread-2.0 gtk+-unix-print-3.0 xi")
 
   # Executable target.
-  add_executable(${CEF_TARGET} ${CEFCLIENT_SRCS})
+  add_executable(${CEF_TARGET} ${CEFTEST_SRCS})
   SET_EXECUTABLE_TARGET_PROPERTIES(${CEF_TARGET})
   add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
   target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper "GL" ${CEF_STANDARD_LIBS})
@@ -432,8 +432,8 @@ if(OS_LINUX)
   COPY_FILES("${CEF_TARGET}" "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
   COPY_FILES("${CEF_TARGET}" "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
 
-  # Copy cefclient resource files to the target output directory.
-  COPY_FILES("${CEF_TARGET}" "${CEFCLIENT_RESOURCES_SRCS}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_TARGET_OUT_DIR}/cefclient_files")
+  # Copy ceftest resource files to the target output directory.
+  COPY_FILES("${CEF_TARGET}" "${CEFTEST_RESOURCES_SRCS}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_TARGET_OUT_DIR}/ceftest_files")
 
   # Set SUID permissions on the chrome-sandbox target.
   SET_LINUX_SUID_PERMISSIONS("${CEF_TARGET}" "${CEF_TARGET_OUT_DIR}/chrome-sandbox")
@@ -455,21 +455,21 @@ if(OS_MAC)
       )
   endif()
 
-  # All sources required by the "cefclient" target. Generates an app bundle that
+  # All sources required by the "ceftest" target. Generates an app bundle that
   # is used only for the browser process.
-  set(CEFCLIENT_SRCS
-    ${CEFCLIENT_BROWSER_SRCS}
-    ${CEFCLIENT_COMMON_SRCS}
-    ${CEFCLIENT_RESOURCES_SRCS}
-    ${CEFCLIENT_MAC_SRCS}
+  set(CEFTEST_SRCS
+    ${CEFTEST_BROWSER_SRCS}
+    ${CEFTEST_COMMON_SRCS}
+    ${CEFTEST_RESOURCES_SRCS}
+    ${CEFTEST_MAC_SRCS}
     )
 
-  # All sources required by the "cefclient Helper" target. Generates an app
+  # All sources required by the "ceftest Helper" target. Generates an app
   # bundle that is used only for non-browser processes.
-  set(CEFCLIENT_HELPER_SRCS
-    ${CEFCLIENT_COMMON_SRCS}
-    ${CEFCLIENT_RENDERER_SRCS}
-    ${CEFCLIENT_MAC_HELPER_SRCS}
+  set(CEFTEST_HELPER_SRCS
+    ${CEFTEST_COMMON_SRCS}
+    ${CEFTEST_RENDERER_SRCS}
+    ${CEFTEST_MAC_HELPER_SRCS}
     )
 
   # Output path for the main app bundle.
@@ -485,7 +485,7 @@ if(OS_MAC)
   endif()
 
   # Main app bundle target.
-  add_executable(${CEF_TARGET} MACOSX_BUNDLE ${CEFCLIENT_RESOURCES_SRCS} ${CEFCLIENT_SRCS})
+  add_executable(${CEF_TARGET} MACOSX_BUNDLE ${CEFTEST_RESOURCES_SRCS} ${CEFTEST_SRCS})
   SET_EXECUTABLE_TARGET_PROPERTIES(${CEF_TARGET})
   add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
   target_link_libraries(${CEF_TARGET} libcef_dll_wrapper ${CEF_STANDARD_LIBS} "-framework OpenGL")
@@ -527,7 +527,7 @@ if(OS_MAC)
     file(WRITE ${_helper_info_plist} ${_plist_contents})
 
     # Create Helper executable target.
-    add_executable(${_helper_target} MACOSX_BUNDLE ${CEFCLIENT_HELPER_SRCS})
+    add_executable(${_helper_target} MACOSX_BUNDLE ${CEFTEST_HELPER_SRCS})
     SET_EXECUTABLE_TARGET_PROPERTIES(${_helper_target})
     add_dependencies(${_helper_target} libcef_dll_wrapper)
     target_link_libraries(${_helper_target} libcef_dll_wrapper ${CEF_STANDARD_LIBS})
@@ -563,7 +563,7 @@ if(OS_MAC)
     "resources/"
     "../shared/resources/"
     )
-  COPY_MAC_RESOURCES("${CEFCLIENT_RESOURCES_SRCS}" "${PREFIXES}" "${CEF_TARGET}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_APP}")
+  COPY_MAC_RESOURCES("${CEFTEST_RESOURCES_SRCS}" "${PREFIXES}" "${CEF_TARGET}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_APP}")
 endif()
 
 
@@ -572,18 +572,18 @@ endif()
 #
 
 if(OS_WINDOWS)
-  # All sources required by the "cefclient" target. Generates an executable that
+  # All sources required by the "ceftest" target. Generates an executable that
   # is used for all processes.
-  set(CEFCLIENT_SRCS
-    ${CEFCLIENT_BROWSER_SRCS}
-    ${CEFCLIENT_COMMON_SRCS}
-    ${CEFCLIENT_RENDERER_SRCS}
-    ${CEFCLIENT_RESOURCES_SRCS}
-    ${CEFCLIENT_WINDOWS_SRCS}
+  set(CEFTEST_SRCS
+    ${CEFTEST_BROWSER_SRCS}
+    ${CEFTEST_COMMON_SRCS}
+    ${CEFTEST_RENDERER_SRCS}
+    ${CEFTEST_RESOURCES_SRCS}
+    ${CEFTEST_WINDOWS_SRCS}
     )
 
   # Executable target.
-  add_executable(${CEF_TARGET} WIN32 ${CEFCLIENT_SRCS})
+  add_executable(${CEF_TARGET} WIN32 ${CEFTEST_SRCS})
   SET_EXECUTABLE_TARGET_PROPERTIES(${CEF_TARGET})
   add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
   target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS} d3d11.lib glu32.lib imm32.lib opengl32.lib)

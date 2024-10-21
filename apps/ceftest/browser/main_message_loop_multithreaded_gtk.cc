@@ -2,7 +2,7 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "tests/cefclient/browser/main_message_loop_multithreaded_gtk.h"
+#include "ceftest/browser/main_message_loop_multithreaded_gtk.h"
 
 #include <X11/Xlib.h>
 #include <gtk/gtk.h>

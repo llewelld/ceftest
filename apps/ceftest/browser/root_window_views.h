@@ -9,9 +9,9 @@
 #include <memory>
 #include <string>
 
-#include "tests/cefclient/browser/client_handler.h"
-#include "tests/cefclient/browser/root_window.h"
-#include "tests/cefclient/browser/views_window.h"
+#include "ceftest/browser/client_handler.h"
+#include "ceftest/browser/root_window.h"
+#include "ceftest/browser/views_window.h"
 
 namespace client {
 

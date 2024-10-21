@@ -2,7 +2,7 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "tests/cefclient/browser/browser_window_osr_gtk.h"
+#include "ceftest/browser/browser_window_osr_gtk.h"
 
 #include <GL/gl.h>
 #include <gdk/gdk.h>
@@ -21,9 +21,9 @@
 #include "include/base/cef_logging.h"
 #include "include/base/cef_macros.h"
 #include "include/wrapper/cef_closure_task.h"
-#include "tests/cefclient/browser/util_gtk.h"
-#include "tests/shared/browser/geometry_util.h"
-#include "tests/shared/browser/main_message_loop.h"
+#include "ceftest/browser/util_gtk.h"
+#include "shared/browser/geometry_util.h"
+#include "shared/browser/main_message_loop.h"
 
 namespace client {
 

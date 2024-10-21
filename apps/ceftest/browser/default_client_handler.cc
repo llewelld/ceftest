@@ -2,7 +2,7 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "tests/cefclient/browser/default_client_handler.h"
+#include "ceftest/browser/default_client_handler.h"
 
 namespace client {
 

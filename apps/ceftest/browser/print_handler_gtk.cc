@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "tests/cefclient/browser/print_handler_gtk.h"
+#include "ceftest/browser/print_handler_gtk.h"
 
 #include <gtk/gtk.h>
 #include <gtk/gtkunixprint.h>
@@ -15,8 +15,8 @@
 #include "include/base/cef_logging.h"
 #include "include/base/cef_macros.h"
 #include "include/wrapper/cef_helpers.h"
-#include "tests/cefclient/browser/root_window.h"
-#include "tests/cefclient/browser/util_gtk.h"
+#include "ceftest/browser/root_window.h"
+#include "ceftest/browser/util_gtk.h"
 
 namespace client {
 

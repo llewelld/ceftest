@@ -2,7 +2,7 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "tests/cefclient/browser/root_window_gtk.h"
+#include "ceftest/browser/root_window_gtk.h"
 
 #include <X11/Xlib.h>
 #include <gdk/gdk.h>
@@ -12,15 +12,15 @@
 
 #include "include/base/cef_callback.h"
 #include "include/cef_app.h"
-#include "tests/cefclient/browser/browser_window_osr_gtk.h"
-#include "tests/cefclient/browser/browser_window_std_gtk.h"
-#include "tests/cefclient/browser/main_context.h"
-#include "tests/cefclient/browser/resource.h"
-#include "tests/cefclient/browser/temp_window.h"
-#include "tests/cefclient/browser/util_gtk.h"
-#include "tests/cefclient/browser/window_test_runner_gtk.h"
-#include "tests/shared/browser/main_message_loop.h"
-#include "tests/shared/common/client_switches.h"
+#include "ceftest/browser/browser_window_osr_gtk.h"
+#include "ceftest/browser/browser_window_std_gtk.h"
+#include "ceftest/browser/main_context.h"
+#include "ceftest/browser/resource.h"
+#include "ceftest/browser/temp_window.h"
+#include "ceftest/browser/util_gtk.h"
+#include "ceftest/browser/window_test_runner_gtk.h"
+#include "shared/browser/main_message_loop.h"
+#include "shared/common/client_switches.h"
 
 namespace client {
 

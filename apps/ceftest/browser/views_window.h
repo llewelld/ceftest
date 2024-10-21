@@ -24,10 +24,10 @@
 #include "include/views/cef_textfield_delegate.h"
 #include "include/views/cef_window.h"
 #include "include/views/cef_window_delegate.h"
-#include "tests/cefclient/browser/image_cache.h"
-#include "tests/cefclient/browser/root_window.h"
-#include "tests/cefclient/browser/views_menu_bar.h"
-#include "tests/cefclient/browser/views_overlay_controls.h"
+#include "ceftest/browser/image_cache.h"
+#include "ceftest/browser/root_window.h"
+#include "ceftest/browser/views_menu_bar.h"
+#include "ceftest/browser/views_overlay_controls.h"
 
 namespace client {
 
