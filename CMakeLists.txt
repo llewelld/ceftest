@@ -144,10 +144,7 @@ endif()
 add_subdirectory(${CEF_LIBCEF_DLL_WRAPPER_PATH} libcef_dll_wrapper)
 
 # Include CEF's test application targets (executes <target>/CMakeLists.txt).
-add_subdirectory(${CEF_ROOT}/tests/cefclient)
-add_subdirectory(${CEF_ROOT}/tests/cefsimple)
-add_subdirectory(${CEF_ROOT}/tests/gtest)
-add_subdirectory(${CEF_ROOT}/tests/ceftests)
+add_subdirectory(${CMAKE_SOURCE_DIR}/apps/ceftest)
 
 # Allow includes relative to the current source directory.
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
