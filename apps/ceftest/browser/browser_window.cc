@@ -41,6 +41,12 @@ void BrowserWindow::OnBrowserCreated(CefRefPtr<CefBrowser> browser) {
   delegate_->OnBrowserCreated(browser);
 }
 
+void BrowserWindow::OnSetDomWalkResult(const std::string& result) {
+  REQUIRE_MAIN_THREAD();
+
+  delegate_->OnSetDomWalkResult(result);
+}
+
 void BrowserWindow::OnBrowserClosing(CefRefPtr<CefBrowser> browser) {
   REQUIRE_MAIN_THREAD();
   DCHECK_EQ(browser->GetIdentifier(), browser_->GetIdentifier());

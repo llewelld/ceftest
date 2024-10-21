@@ -18,7 +18,7 @@ namespace client {
 namespace {
 
 // The default URL to load in a browser window.
-const char kDefaultUrl[] = "https://www.google.com";
+const char kDefaultUrl[] = "https://www.whatsmybrowser.org/";
 
 // Returns the ARGB value for |color|.
 cef_color_t ParseColor(const std::string& color) {
@@ -94,8 +94,7 @@ MainContextImpl::MainContextImpl(CefRefPtr<CefCommandLine> command_line,
   }
 
   // Whether to use a native parent window.
-  const bool use_chrome_native_parent =
-      command_line->HasSwitch(switches::kUseNative);
+  const bool use_chrome_native_parent = true;
 
 #if defined(OS_MAC)
   if (use_chrome_native_parent && !use_alloy_style_) {

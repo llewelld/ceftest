@@ -12,6 +12,7 @@
 
 #include "include/base/cef_callback.h"
 #include "include/cef_app.h"
+#include "include/cef_parser.h"
 #include "ceftest/browser/browser_window_osr_gtk.h"
 #include "ceftest/browser/browser_window_std_gtk.h"
 #include "ceftest/browser/main_context.h"
@@ -21,6 +22,7 @@
 #include "ceftest/browser/window_test_runner_gtk.h"
 #include "shared/browser/main_message_loop.h"
 #include "shared/common/client_switches.h"
+#include "shared/browser/resource_util.h"
 
 namespace client {
 
@@ -90,15 +92,20 @@ RootWindowGtk::RootWindowGtk(bool use_alloy_style)
       window_(nullptr),
       back_button_(nullptr),
       forward_button_(nullptr),
-      reload_button_(nullptr),
-      stop_button_(nullptr),
+      domwalk_button_(nullptr),
       url_entry_(nullptr),
+      count_label_(nullptr),
+      height_label_(nullptr),
+      width_label_(nullptr),
       toolbar_height_(0),
-      menubar_height_(0),
+      infobar_height_(0),
       window_destroyed_(false),
       browser_destroyed_(false),
       force_close_(false),
-      is_closing_(false) {}
+      is_closing_(false)
+{
+  LoadBinaryResource("dom_walk.js", dom_walk_js_);
+}
 
 RootWindowGtk::~RootWindowGtk() {
   REQUIRE_MAIN_THREAD();
@@ -312,6 +319,8 @@ void RootWindowGtk::CreateRootWindow(const CefBrowserSettings& settings,
 
   window_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   CHECK(window_);
+  gtk_window_set_title(GTK_WINDOW(window_), "CEF Test");
+
 
   if (always_on_top_) {
     gtk_window_set_keep_above(GTK_WINDOW(window_), TRUE);
@@ -348,49 +357,38 @@ void RootWindowGtk::CreateRootWindow(const CefBrowserSettings& settings,
 
   GtkWidget* grid = gtk_grid_new();
   gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
+
   g_signal_connect(grid, "size-allocate",
                    G_CALLBACK(&RootWindowGtk::GridSizeAllocated), this);
   gtk_container_add(GTK_CONTAINER(window_), grid);
 
   if (with_controls_) {
-    GtkWidget* menu_bar = CreateMenuBar();
-    g_signal_connect(menu_bar, "size-allocate",
-                     G_CALLBACK(&RootWindowGtk::MenubarSizeAllocated), this);
-
-    gtk_grid_attach(GTK_GRID(grid), menu_bar, 0, 0, 1, 1);
-
     GtkWidget* toolbar = gtk_toolbar_new();
     // Turn off the labels on the toolbar buttons.
     gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
+    gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar), GTK_ICON_SIZE_DND);
     g_signal_connect(toolbar, "size-allocate",
                      G_CALLBACK(&RootWindowGtk::ToolbarSizeAllocated), this);
 
     back_button_ = gtk_tool_button_new(
-        gtk_image_new_from_icon_name("go-previous", GTK_ICON_SIZE_MENU),
+        gtk_image_new_from_icon_name("go-previous", GTK_ICON_SIZE_DND),
         nullptr);
     g_signal_connect(back_button_, "clicked",
                      G_CALLBACK(&RootWindowGtk::BackButtonClicked), this);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), back_button_, -1 /* append */);
 
     forward_button_ = gtk_tool_button_new(
-        gtk_image_new_from_icon_name("go-next", GTK_ICON_SIZE_MENU), nullptr);
+        gtk_image_new_from_icon_name("go-next", GTK_ICON_SIZE_DND), nullptr);
     g_signal_connect(forward_button_, "clicked",
                      G_CALLBACK(&RootWindowGtk::ForwardButtonClicked), this);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), forward_button_, -1 /* append */);
 
-    reload_button_ = gtk_tool_button_new(
-        gtk_image_new_from_icon_name("view-refresh", GTK_ICON_SIZE_MENU),
+    domwalk_button_ = gtk_tool_button_new(
+        gtk_image_new_from_icon_name("gtk-info", GTK_ICON_SIZE_DND),
         nullptr);
-    g_signal_connect(reload_button_, "clicked",
-                     G_CALLBACK(&RootWindowGtk::ReloadButtonClicked), this);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), reload_button_, -1 /* append */);
-
-    stop_button_ = gtk_tool_button_new(
-        gtk_image_new_from_icon_name("process-stop", GTK_ICON_SIZE_MENU),
-        nullptr);
-    g_signal_connect(stop_button_, "clicked",
-                     G_CALLBACK(&RootWindowGtk::StopButtonClicked), this);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), stop_button_, -1 /* append */);
+    g_signal_connect(domwalk_button_, "clicked",
+                     G_CALLBACK(&RootWindowGtk::DomWalkButtonClicked), this);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), domwalk_button_, -1 /* append */);
 
     url_entry_ = gtk_entry_new();
     g_signal_connect(url_entry_, "activate",
@@ -403,8 +401,34 @@ void RootWindowGtk::CreateRootWindow(const CefBrowserSettings& settings,
     gtk_tool_item_set_expand(tool_item, TRUE);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);  // append
 
-    gtk_grid_attach_next_to(GTK_GRID(grid), toolbar, menu_bar, GTK_POS_BOTTOM,
-                            1, 1);
+    gtk_grid_attach(GTK_GRID(grid), toolbar, 0, 0, 1, 1);
+
+
+    GtkWidget* empty_space = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_widget_set_vexpand (empty_space, TRUE);
+    gtk_grid_attach(GTK_GRID(grid), empty_space, 0, 1, 1, 1);
+
+    GtkWidget* infobar = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    // Turn off the labels on the toolbar buttons.
+    g_signal_connect(infobar, "size-allocate",
+                     G_CALLBACK(&RootWindowGtk::InfobarSizeAllocated), this);
+
+    GtkWidget* innerinfobar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(infobar), innerinfobar, false /* expand */, true /* fill */, 10 /* padding */);
+
+    count_label_ = gtk_label_new(
+        "Node count: 0");
+    gtk_box_pack_start(GTK_BOX(innerinfobar), count_label_, true /* expand */, true /* fill */, 0 /* padding */);
+
+    height_label_ = gtk_label_new(
+        "DOM height: 0");
+    gtk_box_pack_start(GTK_BOX(innerinfobar), height_label_, true /* expand */, true /* fill */, 0 /* padding */);
+
+    width_label_ = gtk_label_new(
+        "DOM width: 0");
+    gtk_box_pack_start(GTK_BOX(innerinfobar), width_label_, true /* expand */, true /* fill */, 0 /* padding */);
+
+    gtk_grid_attach(GTK_GRID(grid), infobar, 0, 2, 1, 1);
   }
 
   // Realize (show) the GTK widget. This must be done before the browser is
@@ -492,14 +516,26 @@ void RootWindowGtk::OnSetAddress(const std::string& url) {
 }
 
 void RootWindowGtk::OnSetTitle(const std::string& title) {
-  REQUIRE_MAIN_THREAD();
+}
 
-  if (window_) {
-    ScopedGdkThreadsEnter scoped_gdk_threads;
+void RootWindowGtk::OnSetDomWalkResult(const std::string& result) {
+  CefRefPtr<CefValue> parsed = CefParseJSON(result, JSON_PARSER_ALLOW_TRAILING_COMMAS);
 
-    std::string titleStr(title);
-    gtk_window_set_title(GTK_WINDOW(window_), titleStr.c_str());
-  }
+  int nodes = parsed->GetDictionary()->GetInt("nodes");
+  int maxdepth = parsed->GetDictionary()->GetInt("maxdepth");
+  int maxbreadth = parsed->GetDictionary()->GetInt("maxbreadth");
+
+  gchar* nodes_str = g_strdup_printf("Node count: %d", nodes);
+  gtk_label_set_text(GTK_LABEL(count_label_), nodes_str);
+  g_free(nodes_str);
+
+  gchar* maxdepth_str = g_strdup_printf("DOM height: %d", maxdepth);
+  gtk_label_set_text(GTK_LABEL(height_label_), maxdepth_str);
+  g_free(maxdepth_str);
+
+  gchar* maxbreadth_str = g_strdup_printf("DOM width: %d", maxbreadth);
+  gtk_label_set_text(GTK_LABEL(width_label_), maxbreadth_str);
+  g_free(maxbreadth_str);
 }
 
 void RootWindowGtk::OnSetFullscreen(bool fullscreen) {
@@ -547,8 +583,7 @@ void RootWindowGtk::OnSetLoadingState(bool isLoading,
   if (with_controls_) {
     ScopedGdkThreadsEnter scoped_gdk_threads;
 
-    gtk_widget_set_sensitive(GTK_WIDGET(stop_button_), isLoading);
-    gtk_widget_set_sensitive(GTK_WIDGET(reload_button_), !isLoading);
+    gtk_widget_set_sensitive(GTK_WIDGET(domwalk_button_), !isLoading);
     gtk_widget_set_sensitive(GTK_WIDGET(back_button_), canGoBack);
     gtk_widget_set_sensitive(GTK_WIDGET(forward_button_), canGoForward);
   }
@@ -610,16 +645,6 @@ void RootWindowGtk::NotifyVisibilityChange(bool show) {
   }
 }
 
-void RootWindowGtk::NotifyMenuBarHeight(int height) {
-  if (!CURRENTLY_ON_MAIN_THREAD()) {
-    MAIN_POST_CLOSURE(
-        base::BindOnce(&RootWindowGtk::NotifyMenuBarHeight, this, height));
-    return;
-  }
-
-  menubar_height_ = height;
-}
-
 void RootWindowGtk::NotifyContentBounds(int x, int y, int width, int height) {
   if (!CURRENTLY_ON_MAIN_THREAD()) {
     MAIN_POST_CLOSURE(base::BindOnce(&RootWindowGtk::NotifyContentBounds, this,
@@ -629,9 +654,9 @@ void RootWindowGtk::NotifyContentBounds(int x, int y, int width, int height) {
 
   // Offset browser positioning by any controls that will appear in the client
   // area.
-  const int ux_height = toolbar_height_ + menubar_height_;
+  const int ux_height = toolbar_height_ + infobar_height_;
   const int browser_x = x;
-  const int browser_y = y + ux_height;
+  const int browser_y = y + toolbar_height_;
   const int browser_width = width;
   const int browser_height = height - ux_height;
 
@@ -826,30 +851,17 @@ void RootWindowGtk::GridSizeAllocated(GtkWidget* widget,
 }
 
 // static
-void RootWindowGtk::MenubarSizeAllocated(GtkWidget* widget,
-                                         GtkAllocation* allocation,
-                                         RootWindowGtk* self) {
-  // May be called on the main thread and the UI thread.
-  self->NotifyMenuBarHeight(allocation->height);
-}
-
-// static
-gboolean RootWindowGtk::MenuItemActivated(GtkWidget* widget,
-                                          RootWindowGtk* self) {
-  REQUIRE_MAIN_THREAD();
-
-  // Retrieve the menu ID set in AddMenuEntry.
-  int id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), kMenuIdKey));
-  self->NotifyMenuItem(id);
-
-  return FALSE;  // Don't stop this message.
-}
-
-// static
 void RootWindowGtk::ToolbarSizeAllocated(GtkWidget* widget,
                                          GtkAllocation* allocation,
                                          RootWindowGtk* self) {
   self->toolbar_height_ = allocation->height;
+}
+
+// static
+void RootWindowGtk::InfobarSizeAllocated(GtkWidget* widget,
+                                         GtkAllocation* allocation,
+                                         RootWindowGtk* self) {
+  self->infobar_height_ = allocation->height;
 }
 
 // static
@@ -872,10 +884,14 @@ void RootWindowGtk::StopButtonClicked(GtkButton* button, RootWindowGtk* self) {
 }
 
 // static
-void RootWindowGtk::ReloadButtonClicked(GtkButton* button,
+void RootWindowGtk::DomWalkButtonClicked(GtkButton* button,
                                         RootWindowGtk* self) {
-  REQUIRE_MAIN_THREAD();
-  self->NotifyButtonClicked(IDC_NAV_RELOAD);
+  CefRefPtr<CefBrowser> browser = self->GetBrowser();
+  if (browser.get()) {
+    CefRefPtr<CefFrame> frame = browser->GetMainFrame();
+
+    frame->ExecuteJavaScript(self->dom_walk_js_, "", 0);
+  }
 }
 
 // static
@@ -923,56 +939,6 @@ gboolean RootWindowGtk::URLEntryButtonPress(GtkWidget* widget,
   XSendEvent(xdisplay, xwindow, false, 0, &e);
 
   return FALSE;
-}
-
-GtkWidget* RootWindowGtk::CreateMenuBar() {
-  GtkWidget* menu_bar = gtk_menu_bar_new();
-
-  // Create the test menu.
-  GtkWidget* test_menu = CreateMenu(menu_bar, "Tests");
-  AddMenuEntry(test_menu, "Get Source", ID_TESTS_GETSOURCE);
-  AddMenuEntry(test_menu, "Get Text", ID_TESTS_GETTEXT);
-  AddMenuEntry(test_menu, "New Window", ID_TESTS_WINDOW_NEW);
-  AddMenuEntry(test_menu, "Popup Window", ID_TESTS_WINDOW_POPUP);
-  AddMenuEntry(test_menu, "Request", ID_TESTS_REQUEST);
-  AddMenuEntry(test_menu, "Zoom In", ID_TESTS_ZOOM_IN);
-  AddMenuEntry(test_menu, "Zoom Out", ID_TESTS_ZOOM_OUT);
-  AddMenuEntry(test_menu, "Zoom Reset", ID_TESTS_ZOOM_RESET);
-  if (with_osr_) {
-    AddMenuEntry(test_menu, "Set FPS", ID_TESTS_OSR_FPS);
-    AddMenuEntry(test_menu, "Set Scale Factor", ID_TESTS_OSR_DSF);
-  }
-  AddMenuEntry(test_menu, "Begin Tracing", ID_TESTS_TRACING_BEGIN);
-  AddMenuEntry(test_menu, "End Tracing", ID_TESTS_TRACING_END);
-  AddMenuEntry(test_menu, "Print", ID_TESTS_PRINT);
-  AddMenuEntry(test_menu, "Print to PDF", ID_TESTS_PRINT_TO_PDF);
-  AddMenuEntry(test_menu, "Mute Audio", ID_TESTS_MUTE_AUDIO);
-  AddMenuEntry(test_menu, "Unmute Audio", ID_TESTS_UNMUTE_AUDIO);
-  AddMenuEntry(test_menu, "Other Tests", ID_TESTS_OTHER_TESTS);
-
-  return menu_bar;
-}
-
-GtkWidget* RootWindowGtk::CreateMenu(GtkWidget* menu_bar, const char* text) {
-  GtkWidget* menu_widget = gtk_menu_new();
-  GtkWidget* menu_header = gtk_menu_item_new_with_label(text);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_header), menu_widget);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), menu_header);
-  return menu_widget;
-}
-
-GtkWidget* RootWindowGtk::AddMenuEntry(GtkWidget* menu_widget,
-                                       const char* text,
-                                       int id) {
-  GtkWidget* entry = gtk_menu_item_new_with_label(text);
-  g_signal_connect(entry, "activate",
-                   G_CALLBACK(&RootWindowGtk::MenuItemActivated), this);
-
-  // Set the menu ID that will be retrieved in MenuItemActivated.
-  g_object_set_data(G_OBJECT(entry), kMenuIdKey, GINT_TO_POINTER(id));
-
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu_widget), entry);
-  return entry;
 }
 
 }  // namespace client

@@ -65,6 +65,7 @@ class RootWindowGtk : public RootWindow, public BrowserWindow::Delegate {
                          bool canGoForward) override;
   void OnSetDraggableRegions(
       const std::vector<CefDraggableRegion>& regions) override;
+  void OnSetDomWalkResult(const std::string& message) override;
 
   void NotifyMoveOrResizeStarted();
   void NotifySetFocus();
@@ -77,10 +78,6 @@ class RootWindowGtk : public RootWindow, public BrowserWindow::Delegate {
   void NotifyForceClose();
   void NotifyCloseBrowser();
   void NotifyDestroyedIfDone(bool window_destroyed, bool browser_destroyed);
-
-  GtkWidget* CreateMenuBar();
-  GtkWidget* CreateMenu(GtkWidget* menu_bar, const char* text);
-  GtkWidget* AddMenuEntry(GtkWidget* menu_widget, const char* text, int id);
 
   // Signal handlers for the top-level GTK window.
   static gboolean WindowFocusIn(GtkWidget* widget,
@@ -102,20 +99,17 @@ class RootWindowGtk : public RootWindow, public BrowserWindow::Delegate {
                                 GtkAllocation* allocation,
                                 RootWindowGtk* self);
 
-  // Signal handlers for the GTK menu bar.
-  static void MenubarSizeAllocated(GtkWidget* widget,
-                                   GtkAllocation* allocation,
-                                   RootWindowGtk* self);
-  static gboolean MenuItemActivated(GtkWidget* widget, RootWindowGtk* self);
-
   // Signal handlers for the GTK toolbar.
   static void ToolbarSizeAllocated(GtkWidget* widget,
+                                   GtkAllocation* allocation,
+                                   RootWindowGtk* self);
+  static void InfobarSizeAllocated(GtkWidget* widget,
                                    GtkAllocation* allocation,
                                    RootWindowGtk* self);
   static void BackButtonClicked(GtkButton* button, RootWindowGtk* self);
   static void ForwardButtonClicked(GtkButton* button, RootWindowGtk* self);
   static void StopButtonClicked(GtkButton* button, RootWindowGtk* self);
-  static void ReloadButtonClicked(GtkButton* button, RootWindowGtk* self);
+  static void DomWalkButtonClicked(GtkButton* button, RootWindowGtk* self);
 
   // Signal handlers for the GTK URL entry field.
   static void URLEntryActivate(GtkEntry* entry, RootWindowGtk* self);
@@ -139,20 +133,27 @@ class RootWindowGtk : public RootWindow, public BrowserWindow::Delegate {
   // Buttons.
   GtkToolItem* back_button_;
   GtkToolItem* forward_button_;
-  GtkToolItem* reload_button_;
-  GtkToolItem* stop_button_;
+  GtkToolItem* domwalk_button_;
 
   // URL text field.
   GtkWidget* url_entry_;
 
+  // Info labels
+  GtkWidget* count_label_;
+  GtkWidget* height_label_;
+  GtkWidget* width_label_;
+
   // Height of UX controls that affect browser window placement.
   int toolbar_height_;
-  int menubar_height_;
+  int infobar_height_;
 
   CefRect browser_bounds_;
 
   bool window_destroyed_;
   bool browser_destroyed_;
+
+  // JavaScript data
+  std::string dom_walk_js_;
 
   // Members only accessed on the UI thread because they're needed for
   // WindowDelete.

@@ -28,8 +28,8 @@ bool GetResourceDir(std::string& dir) {
     return false;
   }
 
-  // Add "cefclient_files" to the path.
-  strcpy(pos + 1, "cefclient_files");
+  // Add "ceftest_files" to the path.
+  strcpy(pos + 1, "ceftest_files");
   dir = std::string(buff);
   return true;
 }

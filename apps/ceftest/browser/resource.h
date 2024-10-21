@@ -4,7 +4,7 @@
 
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by cefclient.rc
+// Used by ceftest.rc
 //
 #define BINARY 256
 #define IDC_MYICON 2

@@ -88,6 +88,8 @@ class ClientHandler : public BaseClientHandler,
     // Called on the UI thread before a context menu is displayed.
     virtual void OnBeforeContextMenu(CefRefPtr<CefMenuModel> model) {}
 
+    virtual void OnSetDomWalkResult(const std::string& result) = 0;
+
    protected:
     virtual ~Delegate() = default;
   };

@@ -67,6 +67,7 @@ class RootWindowViews : public RootWindow,
       CefRefPtr<CefClient> client) override;
   void OnTest(int test_id) override;
   void OnExit() override;
+  void OnSetDomWalkResult(const std::string&) override {};
 
  protected:
   // ClientHandler::Delegate methods:

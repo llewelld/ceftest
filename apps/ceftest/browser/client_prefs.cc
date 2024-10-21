@@ -19,7 +19,7 @@ namespace client::prefs {
 
 namespace {
 
-constexpr char kPrefWindowRestore[] = "cefclient.window_restore";
+constexpr char kPrefWindowRestore[] = "ceftest.window_restore";
 
 constexpr char kWindowRestoreStateKey[] = "state";
 constexpr char kWindowRestoreBoundsKey[] = "bounds";

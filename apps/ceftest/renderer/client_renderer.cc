@@ -16,6 +16,50 @@ namespace client::renderer {
 
 namespace {
 
+class DomWalkHandler : public CefV8Handler {
+ public:
+  DomWalkHandler(CefRefPtr<CefBrowser> browser)
+    : browser(browser) {}
+
+  ~DomWalkHandler() {
+    browser = nullptr;
+  }
+
+  bool Execute(const CefString& name,
+               CefRefPtr<CefV8Value> object,
+               const CefV8ValueList& arguments,
+               CefRefPtr<CefV8Value>& retval,
+               CefString& exception) override;
+
+  CefRefPtr<CefBrowser> browser;
+
+  IMPLEMENT_REFCOUNTING(DomWalkHandler);
+};
+
+
+bool DomWalkHandler::Execute(const CefString& name,
+           CefRefPtr<CefV8Value> object,
+           const CefV8ValueList& arguments,
+           CefRefPtr<CefV8Value>& retval,
+           CefString& exception) {
+  if (!arguments.empty()) {
+    // Create the message object.
+    CefRefPtr<CefProcessMessage> msg = CefProcessMessage::Create("dom_walk");
+
+    // Retrieve the argument list object.
+    CefRefPtr<CefListValue> args = msg->GetArgumentList();
+
+    // Populate the argument values.
+    args->SetString(0, arguments[0]->GetStringValue());
+
+    // Send the process message to the main frame in the render process.
+    // Use PID_BROWSER instead when sending a message to the browser process.
+    browser->GetMainFrame()->SendProcessMessage(PID_BROWSER, msg);
+  }
+  return true;
+}
+
+
 // Must match the value in client_handler.cc.
 const char kFocusedNodeChangedMessage[] = "ClientRenderer.FocusedNodeChanged";
 
@@ -45,6 +89,21 @@ class ClientRenderDelegate : public ClientAppRenderer::Delegate {
                         CefRefPtr<CefFrame> frame,
                         CefRefPtr<CefV8Context> context) override {
     message_router_->OnContextCreated(browser, frame, context);
+    if (!dom_walk_handler) {
+      dom_walk_handler = new DomWalkHandler(browser);
+    }
+
+    CefRefPtr<CefV8Context> v8_context = frame->GetV8Context();
+    if (v8_context.get() && v8_context->Enter()) {
+      CefRefPtr<CefV8Value> global = v8_context->GetGlobal();
+      CefRefPtr<CefV8Value> dom_walk = CefV8Value::CreateFunction("dom_walk", dom_walk_handler);
+      global->SetValue("dom_walk", dom_walk, V8_PROPERTY_ATTRIBUTE_READONLY);
+
+      CefV8ValueList args;
+      dom_walk->ExecuteFunction(global, args);
+
+      v8_context->Exit();
+    }
   }
 
   void OnContextReleased(CefRefPtr<ClientAppRenderer> app,
@@ -52,6 +111,7 @@ class ClientRenderDelegate : public ClientAppRenderer::Delegate {
                          CefRefPtr<CefFrame> frame,
                          CefRefPtr<CefV8Context> context) override {
     message_router_->OnContextReleased(browser, frame, context);
+    dom_walk_handler = nullptr;
   }
 
   void OnFocusedNodeChanged(CefRefPtr<ClientAppRenderer> app,
@@ -80,6 +140,7 @@ class ClientRenderDelegate : public ClientAppRenderer::Delegate {
 
  private:
   bool last_node_is_editable_ = false;
+  CefRefPtr<CefV8Handler> dom_walk_handler;
 
   // Handles the renderer side of query routing.
   CefRefPtr<CefMessageRouterRendererSide> message_router_;

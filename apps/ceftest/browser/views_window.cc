@@ -80,7 +80,7 @@ void MakeButtonsSameSize(const LabelButtons& buttons) {
 
 void AddTestMenuItems(CefRefPtr<CefMenuModel> test_menu) {
   test_menu->AddItem(ID_TESTS_GETSOURCE, "Get Source");
-  test_menu->AddItem(ID_TESTS_GETTEXT, "Get Text");
+  test_menu->AddItem(ID_TESTS_GETTEXT, "Get Text 3");
   test_menu->AddItem(ID_TESTS_WINDOW_NEW, "New Window");
   test_menu->AddItem(ID_TESTS_WINDOW_POPUP, "Popup Window");
   test_menu->AddItem(ID_TESTS_WINDOW_DIALOG, "Dialog Window");

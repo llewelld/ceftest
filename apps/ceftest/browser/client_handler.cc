@@ -27,6 +27,7 @@
 #include "shared/common/binary_value_utils.h"
 #include "shared/common/client_switches.h"
 #include "shared/common/string_util.h"
+#include <iostream>
 
 namespace client {
 
@@ -562,6 +563,12 @@ bool ClientHandler::OnProcessMessageReceived(
   if (message_name == bv_utils::kTestSendSMRProcessMessage) {
     OnTestSMRProcessMessageReceived(frame, message, finish_time);
     return true;
+  }
+
+  if (message_name == "dom_walk") {
+    if (delegate_) {
+      delegate_->OnSetDomWalkResult(message->GetArgumentList()->GetString(0));
+    }
   }
 
   return false;
