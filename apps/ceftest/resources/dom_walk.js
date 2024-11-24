@@ -1,3 +1,7 @@
+/* vim: set et ts=4 sts=4 sw=4: */
+/* SPDX-License-Identifier: BSD-2-Clause */
+/* Copyright © 2024 David Llewellyn-Jones */
+
 function collect_node_stats(global_context, local_context, node) {
     // Update the context
     local_context.depth += 1;
@@ -19,7 +23,7 @@ function collect_node_stats(global_context, local_context, node) {
 
     // Paint the DOM red
     if (node.style) {
-        node.style.border = "1px dashed red";
+        node.style.boxShadow = "inset 0px 0px 1px 0.5px red";
     }
 
     // Move back up the tree
@@ -27,24 +31,26 @@ function collect_node_stats(global_context, local_context, node) {
     return local_context;
 }
 
-// Data available to all nodes
-global_context = {
-    "nodes": 0,
-    "maxdepth": 0,
-    "maxbreadth": 0
-}
+function node_stats() {
+    // Data available to all nodes
+    let global_context = {
+        "nodes": 0,
+        "maxdepth": 0,
+        "maxbreadth": 0
+    }
 
-// Data that's local to the node and shared with the parent
-local_context = {
-    "depth": 0,
-    "breadth": [1]
-}
+    // Data that's local to the node and shared with the parent
+    let local_context = {
+        "depth": 0,
+        "breadth": [1]
+    }
 
-// Off we go
-local_context = collect_node_stats(global_context, local_context, document);
-global_context.maxbreadth = Math.max.apply(null, local_context.breadth);
+    // Off we go
+    local_context = collect_node_stats(global_context, local_context, document);
+    global_context.maxbreadth = Math.max.apply(null, local_context.breadth);
+    return global_context;
+}
 
 // Return the results (only strings allowed)
-// See: https://doc.qt.io/qt-6/qml-qtwebengine-webengineview.html#runJavaScript-method
-dom_walk(JSON.stringify(global_context))
-
+// See: DomWalkHandler::Execute() defined in renderer/client_renderer.cc
+dom_walk(JSON.stringify(node_stats()))

@@ -359,6 +359,9 @@ set(CEFTEST_RESOURCES_RESOURCES_SRCS
   resources/window.html
   resources/xmlhttprequest.html
   resources/dom_walk.js
+  resources/back.png
+  resources/forward.png
+  resources/execute.png
   )
 source_group(ceftest\\\\resources FILES ${CEFTEST_RESOURCES_RESOURCES_SRCS})
 

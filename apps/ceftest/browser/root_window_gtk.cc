@@ -80,6 +80,24 @@ void MaximizeWindow(GtkWindow* window) {
   gtk_window_maximize(window);
 }
 
+GtkWidget* ExtractImage(gchar const * const name) {
+    GdkPixbuf* pixbuf;
+    GdkPixbufLoader *loader;
+    std::string data;
+    GtkWidget* image;
+
+    LoadBinaryResource(name, data);
+    loader = gdk_pixbuf_loader_new();
+    gdk_pixbuf_loader_write(loader, reinterpret_cast<guchar*>(data.data()), data.length(), NULL);
+    gdk_pixbuf_loader_close(loader, NULL);
+    pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+
+    image = gtk_image_new_from_pixbuf(pixbuf);
+    g_clear_object(&loader);
+
+    return image;
+}
+
 }  // namespace
 
 RootWindowGtk::RootWindowGtk(bool use_alloy_style)
@@ -366,31 +384,38 @@ void RootWindowGtk::CreateRootWindow(const CefBrowserSettings& settings,
     GtkWidget* toolbar = gtk_toolbar_new();
     // Turn off the labels on the toolbar buttons.
     gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
-    gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar), GTK_ICON_SIZE_DND);
+    gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar), GTK_ICON_SIZE_LARGE_TOOLBAR);
     g_signal_connect(toolbar, "size-allocate",
                      G_CALLBACK(&RootWindowGtk::ToolbarSizeAllocated), this);
 
-    back_button_ = gtk_tool_button_new(
-        gtk_image_new_from_icon_name("go-previous", GTK_ICON_SIZE_DND),
-        nullptr);
+    GtkWidget* image;
+
+    image = ExtractImage("back.png");
+    back_button_ = gtk_tool_button_new(image, nullptr);
     g_signal_connect(back_button_, "clicked",
                      G_CALLBACK(&RootWindowGtk::BackButtonClicked), this);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), back_button_, -1 /* append */);
 
-    forward_button_ = gtk_tool_button_new(
-        gtk_image_new_from_icon_name("go-next", GTK_ICON_SIZE_DND), nullptr);
+    image = ExtractImage("forward.png");
+    forward_button_ = gtk_tool_button_new(image, nullptr);
     g_signal_connect(forward_button_, "clicked",
                      G_CALLBACK(&RootWindowGtk::ForwardButtonClicked), this);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), forward_button_, -1 /* append */);
 
-    domwalk_button_ = gtk_tool_button_new(
-        gtk_image_new_from_icon_name("gtk-info", GTK_ICON_SIZE_DND),
-        nullptr);
+    image = ExtractImage("execute.png");
+    domwalk_button_ = gtk_tool_button_new(image, nullptr);
     g_signal_connect(domwalk_button_, "clicked",
                      G_CALLBACK(&RootWindowGtk::DomWalkButtonClicked), this);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), domwalk_button_, -1 /* append */);
 
+    GtkToolItem* gap = gtk_separator_tool_item_new();
+    gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(gap), FALSE);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gap, -1);  // append
+
+    g_object_set(gtk_settings_get_default(), "gtk-cursor-visible", TRUE, NULL);
+
     url_entry_ = gtk_entry_new();
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(url_entry_), TRUE);
     g_signal_connect(url_entry_, "activate",
                      G_CALLBACK(&RootWindowGtk::URLEntryActivate), this);
     g_signal_connect(url_entry_, "button-press-event",
@@ -402,7 +427,6 @@ void RootWindowGtk::CreateRootWindow(const CefBrowserSettings& settings,
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);  // append
 
     gtk_grid_attach(GTK_GRID(grid), toolbar, 0, 0, 1, 1);
-
 
     GtkWidget* empty_space = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_widget_set_vexpand (empty_space, TRUE);
